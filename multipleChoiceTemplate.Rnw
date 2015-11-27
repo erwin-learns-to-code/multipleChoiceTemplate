@@ -1,0 +1,156 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[inline]{enumitem}
+
+%\renewcommand{\theenumi}{\Alph{enumi}}
+
+
+\begin{document}
+
+<<echo=F, results='hide'>>=
+df <- data.frame(Prompt = c("A Beatle", "A muscle", "A city")
+           , Correct = c("John", "biceps", "London")
+           , Choice1 = c("Pavarotti", "femur", "Venezuela")
+           , Choice2 = c("Sting", "retina", "Texas")
+           , stringsAsFactors = FALSE)
+
+
+## Setting for format of items:
+## Paragraph choices:
+#qformat <- "\\item %s: \\begin{enumerate} \\item %s \\item %s \\item %s \\end{enumerate}"
+
+## Inline choices:
+qformat <- "\\item %s: \\par \\begin{enumerate*} \\item %s \\item %s \\item %s \\end{enumerate*}"
+
+set.seed(1) # For reproducible tests
+
+@
+
+
+
+\section{Answers not randomised}
+
+\begin{enumerate}
+
+<<echo=F, results='asis'>>=
+
+item <- sprintf(qformat, df$Prompt, df$Correct,df$Choice1, df$Choice2 )
+
+cat(item)
+
+@
+\end{enumerate}
+
+
+\section{Choices randomised}
+
+\begin{enumerate}
+
+<<echo=FALSE, results='asis'>>=
+
+keys <- NULL
+
+for (i in (1:nrow(df))){
+  choices <- sample(df[i,2:4]) # Shuffle choices
+  key <- which(names(choices) == "Correct")
+  keys <- c(keys, key)
+  prompt <- c(prompt = df$Prompt[i]) # To preserve name
+  item <- c(prompt, choices)
+  
+  x <- sprintf(qformat, item[1], item[2], item[3], item[4] )
+  cat(x)
+
+}
+
+@
+
+\end{enumerate}
+
+\section{Item order and choices randomised}
+
+\begin{enumerate}
+
+<<echo=FALSE, results='asis'>>=
+
+keys <- NULL
+
+n <- nrow(df)
+
+rrow <- sample(n,n)
+
+for (i in rrow){
+  choices <- sample(df[i,2:4]) # Shuffle choices
+  key <- which(names(choices) == "Correct")
+  keys <- c(keys, key)
+  prompt <- c(prompt = df$Prompt[i]) # To preserve name
+  item <- c(prompt, choices)
+  
+  x <- sprintf(qformat, item[1], item[2], item[3], item[4] )
+  cat(x)
+
+}
+
+@
+
+\end{enumerate}
+
+
+
+\subsection{Key}
+
+<<echo=FALSE, results='asis'>>=
+
+n <- seq(length(keys)) # Question number
+r <- c(letters[keys])  # Change correct response from numbers to letters
+
+clave <- sprintf("Q.%s: %s, ", n, r)
+
+cat(clave)
+
+@
+
+\clearpage
+
+
+<<echo=FALSE, results='asis', warning=FALSE>>=
+
+
+library(xtable)
+
+mydf <- data.frame(Question = paste("Q.", seq(nrow(df)), sep ="")
+           , A = rep("o", nrow(df))
+           , B = rep("o", nrow(df))
+           , C = rep("o", nrow(df))
+       )
+
+
+
+strCaption <- "Please enter your answers in this table."
+
+
+out <- xtable(mydf)
+align(out) <- rep("|c|", 5)
+
+
+print(out
+     , size="Large" #Change size; useful for bigger tables
+     , include.rownames=FALSE #Don't print rownames
+     , caption.placement="top"
+     , include.colnames= T
+     #, add.to.rows = list(pos = list(1, nrow(df)), command = c("$\\bigcirc"))
+)     
+     
+     
+
+
+
+@
+
+
+
+
+
+
+
+
+\end{document}
