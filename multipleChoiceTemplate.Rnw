@@ -118,13 +118,8 @@ cat(clave)
 
 library(xtable)
 
-mydf <- data.frame(Question = paste("Q.", seq(nrow(df)), sep ="")
-           , A = rep("o", nrow(df))
-           , B = rep("o", nrow(df))
-           , C = rep("o", nrow(df))
-       )
-
-
+mydf <- data.frame(Question = paste("Q.", seq(nrow(df)), sep =""))
+for (i in LETTERS[1:3]) mydf[ ,i] <- rep('$\\bigcirc$', nrow(df))
 
 strCaption <- "Please enter your answers in this table."
 
@@ -132,13 +127,12 @@ strCaption <- "Please enter your answers in this table."
 out <- xtable(mydf)
 align(out) <- rep("|c|", 5)
 
-
-print(out
+print.xtable(out
      , size="Large" #Change size; useful for bigger tables
      , include.rownames=FALSE #Don't print rownames
      , caption.placement="top"
      , include.colnames= T
-     #, add.to.rows = list(pos = list(1, nrow(df)), command = c("$\\bigcirc"))
+     , sanitize.text.function = function (x) {x}
 )     
      
      
