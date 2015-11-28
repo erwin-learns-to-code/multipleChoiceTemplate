@@ -8,11 +8,13 @@
 \begin{document}
 
 <<echo=F, results='hide'>>=
-df <- data.frame(Prompt = c("A Beatle", "A muscle", "A city")
-           , Correct = c("John", "biceps", "London")
-           , Choice1 = c("Pavarotti", "femur", "Venezuela")
-           , Choice2 = c("Sting", "retina", "Texas")
-           , stringsAsFactors = FALSE)
+df <- data.frame(
+    Prompt           = c("A Beatle",  "A muscle", "A city"   )
+  , Correct          = c("John",      "biceps",   "London"   )
+  , Choice1          = c("Pavarotti", "femur",    "Venezuela")
+  , Choice2          = c("Sting",     "retina",   "Texas"    )
+  , stringsAsFactors = FALSE
+);
 
 
 ## Setting for format of items:
@@ -20,7 +22,15 @@ df <- data.frame(Prompt = c("A Beatle", "A muscle", "A city")
 #qformat <- "\\item %s: \\begin{enumerate} \\item %s \\item %s \\item %s \\end{enumerate}"
 
 ## Inline choices:
-qformat <- "\\item %s: \\par \\begin{enumerate*} \\item %s \\item %s \\item %s \\end{enumerate*}"
+qformat <- '%%
+\\item %s:
+
+    \\begin{enumerate*}
+        \\item %s
+        \\item %s
+        \\item %s 
+    \\end{enumerate*}
+';
 
 set.seed(1) # For reproducible tests
 
