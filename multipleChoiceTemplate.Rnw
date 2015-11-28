@@ -35,11 +35,19 @@ qformat <- '%%
 set.seed(1); # For reproducible tests
 
 print.questions <- function (dat.df, randomise.item.order = FALSE) {
+    
+    questions.begin  <- '\\begin{enumerate}';
+    questions.end    <- '\\end{enumerate}'
+    answer.key.begin <- '\\subsection{Key}';
+    answer.key.end   <- ''
+
     option.order <- 1:nrow(dat.df);
     if (randomise.item.order) {
         option.order <- sample(nrow(dat.df), nrow(dat.df));
     }
+
     keys <- NULL;
+    cat(questions.begin);
     for (i in option.order) {
         choices <- sample(dat.df[i,2:4]) # Shuffle choices
         key.ans <- which(names(choices) == "Correct")
@@ -49,10 +57,17 @@ print.questions <- function (dat.df, randomise.item.order = FALSE) {
         
         cat(sprintf(qformat, item[1], item[2], item[3], item[4] ));
     }
+    cat(questions.end);
+
+    if (randomise.item.order) {         # This should probably always be printed, no?
+        n <- seq(length(keys)) # Question number
+        r <- c(letters[keys])  # Change correct response from numbers to letters
+
+        cat(answer.key.begin);
+        cat(sprintf("Q.%s: %s, ", n, r));
+    }
 }
 @
-
-
 
 \section{Answers not randomised}
 
@@ -66,33 +81,14 @@ cat(sprintf(qformat, df$Prompt, df$Correct,df$Choice1, df$Choice2 ));
 
 \section{Choices randomised}
 
-\begin{enumerate}
-
 <<echo=FALSE, results='asis'>>=
 print.questions(df);
 @
 
-\end{enumerate}
-
 \section{Item order and choices randomised}
-
-\begin{enumerate}
 
 <<echo=FALSE, results='asis'>>=
 print.questions(df, randomise.item.order = TRUE);
-@
-
-\end{enumerate}
-
-
-
-\subsection{Key}
-
-<<echo=FALSE, results='asis'>>=
-n <- seq(length(keys)) # Question number
-r <- c(letters[keys])  # Change correct response from numbers to letters
-
-cat(sprintf("Q.%s: %s, ", n, r));
 @
 
 \clearpage
